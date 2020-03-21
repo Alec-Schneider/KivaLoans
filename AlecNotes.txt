@@ -24,6 +24,7 @@ kiva_loans.csv
          - fill in with '' since there were no tags added to application?
      - borrow_genders
          - fill in with '' to signify none
+         - maybe fill in based on activity or see if tags contain woman?
          
 3. Feature Engineering:
     - time_til_funded
@@ -32,8 +33,10 @@ kiva_loans.csv
     - borrower_count
         - number of borrowers in borrow_genders
     - female_pct
+        - create a col for female count
         - pct of female borrowers in borrow_genders
     - male_pct
+        - create a col for male count
         - pct of male borrowers in borrow_genders
     - posted_time_day
         - day of the week that the loan application was posted
@@ -53,7 +56,7 @@ kiva_loans.csv
         - sector
         - repayment_interval
         - country
-        - partner_id
+        - partner_id - convert to str before one hot encoding
     - Ordinal Encoding
 
 4. Features to drop for training?:
@@ -66,15 +69,16 @@ kiva_loans.csv
     - borrow_genders
     - region?
     - disbursed_time
-    - 
     
 5. Target:
     - This is going to to have to be a piecewise function like so:
         1. Was the loan fully funded?
-            a. Use a sigmoid function, RandomForestClassifier or XGBClassifier to first classify if the the loan is funded. 
+            a. Use a sigmoid function, RandomForestClassifier or XGBClassifier, or Neural Network to first classify if the the loan is funded. 
             b. No, predict the % of loan_amount was actually funded
-                 - find the features that have a strong association with funding most of the loan_amount
+                - used Lasso, Ridge, XGBRegressor, RandomForestRegressor or NN?
+                - find the features that have a strong association with funding most of the loan_amount
             c. Yes, then how fast was the loan funded
-                 - Find the features that minimize the time to funding gyuu
+                 - Find the features that minimize the time to funding
+                 - used Lasso, Ridge, XGBRegressor, RandomForestRegressor or NN?
              
              
