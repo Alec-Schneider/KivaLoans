@@ -1,0 +1,80 @@
+kiva_loans.csv
+1. Converting columns to appropriate dtype:
+    - To datetime:
+        - posted_time
+        - disbursed_time
+        - funded_time - need to fill in null values to handle loans that were not fully funded
+        - date
+ 2. Columns with null values:
+     - use
+         - fill in with '' since all others are contain a description
+         - Use and borrower_genders are always null together
+     - country_code
+         - Nambia does not have a country code, fill with 'NB' as that code is not currently in the data
+     - region
+         - fill in region with most popular region in the country?
+     - partner_id
+         - fill in with 0 to signify no partner? going to be one hot encoded anyway
+     - disbursed_time
+         - why were there loans that were not disbursed? Should we drop them? There are loans that were fully funded and not disbursed.
+         - if not fill in with pd.to_datetime(0) to default to 1970-01-01
+     - funded_time - means that a funded_amount never got to loan_amount (Need to fill in before converting to datetime)
+         - fill in with pd.to_datetime(0) to default to 1970-01-01
+     - tags - they did not add tags when filling out application?
+         - fill in with '' since there were no tags added to application?
+     - borrow_genders
+         - fill in with '' to signify none
+         
+3. Feature Engineering:
+    - time_til_funded
+        - funded_time - posted_time
+        - need to first check if a loan was even fully funded
+    - borrower_count
+        - number of borrowers in borrow_genders
+    - female_pct
+        - pct of female borrowers in borrow_genders
+    - male_pct
+        - pct of male borrowers in borrow_genders
+    - posted_time_day
+        - day of the week that the loan application was posted
+    - posted_time_hour
+        - hour of the day that the loan application was posted
+    - len_of_use
+        - number of words in use
+    - len_of_tags
+        - number of tags in tags
+    - Numerical Features:
+        - lender_count
+        - loan_amount
+        - term_in_months
+    - One Hot Endcoding:
+        - activity
+        - currency
+        - sector
+        - repayment_interval
+        - country
+        - partner_id
+    - Ordinal Encoding
+
+4. Features to drop for training?:
+    - id
+    - posted_time?
+    - fundeded_amount
+    - country_code or country?
+    - tags
+    - use
+    - borrow_genders
+    - region?
+    - disbursed_time
+    - 
+    
+5. Target:
+    - This is going to to have to be a piecewise function like so:
+        1. Was the loan fully funded?
+            a. Use a sigmoid function, RandomForestClassifier or XGBClassifier to first classify if the the loan is funded. 
+            b. No, predict the % of loan_amount was actually funded
+                 - find the features that have a strong association with funding most of the loan_amount
+            c. Yes, then how fast was the loan funded
+                 - Find the features that minimize the time to funding gyuu
+             
+             
