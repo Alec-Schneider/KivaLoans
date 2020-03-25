@@ -25,6 +25,7 @@ def fit_xgbmodel(model, X_train, y_train, X_test, y_test, params=None, scoring='
     train_preds = model.predict(X_train[params].values)
     test_preds = model.predict(X_test[params].values)
     #train_predprob = model.predict_proba(X[params])[:, 1]
+    print('Convergered after %d estmators' % mode.get_)
     if scoring == 'rmse':
         print('Training %s: %.4g' % (scoring ,np.sqrt(mean_squared_error(y_train, train_preds))))
         print('Test %s: %.4g' % (scoring, np.sqrt(mean_squared_error(y_test, test_preds))))
