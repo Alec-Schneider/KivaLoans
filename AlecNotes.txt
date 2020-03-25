@@ -1,0 +1,113 @@
+kiva_loans.csv
+1. Converting columns to appropriate dtype:
+    - To datetime:
+        - posted_time
+        - disbursed_time
+        - funded_time - need to fill in null values to handle loans that were not fully funded
+        - date
+ 2. Columns with null values:
+     - use
+         - fill in with '' since all others are contain a description
+         - Use and borrower_genders are always null together
+     - country_code
+         - Nambia does not have a country code, fill with 'NB' as that code is not currently in the data
+         - drop country code
+     - region
+         - fill in region with most popular region in the country?
+         - drop it
+     - partner_id
+         - fill in with 0 to signify no partner? going to be one hot encoded anyway
+     - disbursed_time
+         - why were there loans that were not disbursed? Should we drop them? There are loans that were fully funded and not disbursed.
+         - if not fill in with pd.to_datetime(0) to default to 1970-01-01
+         - maybe look into afterwards
+     - funded_time - means that a funded_amount never got to loan_amount (Need to fill in before converting to datetime)
+         - fill in with pd.to_datetime(0) to default to 1970-01-01
+     - tags - they did not add tags when filling out application?
+         - fill in with '' since there were no tags added to application?
+         - 
+     - borrow_genders
+         - fill in with '' to signify none
+         - maybe fill in based on activity or see if tags contain woman?
+         
+3. Feature Engineering:
+    - loan_funded
+        - 0 or 1
+    - time_til_funded_mins x
+        - funded_time - posted_time
+        - need to first check if a loan was even fully funded
+    - num_of_borrowers x
+        - number of borrowers in borrow_genders
+    - female_pct x
+        - create a col for female count
+        - pct of female borrowers in borrow_genders
+        - no need for male pct as Aoife said that would cause multicollinearity
+    - posted_day x
+        - day of the week that the loan application was posted
+    - posted_hour x
+        - hour of the day that the loan application was posted
+    - words_in_use x
+        - number of words in use
+    - num_of_tags x
+        - number of tags in tags
+    - partner_on_loan x
+        - 0 if no partner, 1 if there is a partner on the loan
+    - pct_funded
+    - Numerical Features:
+        - lender_count
+        - loan_amount
+        - term_in_months
+    - One Hot Endcoding:
+        - activity
+        - currency
+        - sector
+        - repayment_interval
+        - country
+        - posted_day
+    - Ordinal Encoding
+
+4. Features to drop for training?:
+    - id
+    - posted_time?
+    - funded_amount
+    - country_code or country?
+    - tags
+    - use
+    - borrow_genders
+    - region?
+    - disbursed_time
+    - partner_id
+    
+5. Target:
+    - This is going to to have to be a piecewise function like so:
+        1. Was the loan fully funded? loan_funded
+            a. Use a sigmoid function, RandomForestClassifier or XGBClassifier, or Neural Network to first classify if the the loan is funded. 
+                - 
+            b. No, predict the % of loan_amount was actually funded - pct_funded
+                - used Lasso, Ridge, XGBRegressor, RandomForestRegressor or NN?
+                - find the features that have a strong association with funding most of the loan_amount
+            c. Yes, then how fast was the loan funded (minutes as a an int) - time_til_funded_mins
+                 - was it exactly funded?
+                     - run one model
+                 - was it over funded?
+                 - Find the features that minimize the time to funding
+                 - used Lasso, Ridge, XGBRegressor, RandomForestRegressor or NN?
+            d. over_funded
+               classification_predictions = 0 1 2  =x 
+               
+               np.piecewise(x, [x <1, x>1], [b,c, d])
+               
+       1. Classify fully funded or not?
+           1. 0
+               - Predict funded pct pct_model
+           2. 1
+               - Predict how fast the loan will ge funded in minutes fast_model
+               - pct_model
+               
+               - def run_models(x):
+                      fast_model(x)
+                      pct_model(x)
+                      return fast, pct
+               
+             
+             
