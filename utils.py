@@ -53,3 +53,16 @@ def plot_confusion_matrix(y_true, predictions, title=None, figsize=(8,8), cmap='
     plt.xlabel('Actual Class')
     plt.ylabel('Predicted Class')
     plt.show()
+    
+
+def plot_predictions(y_true, predictions, title=None, figsize=(8,8), save_to=None):
+    plt.figure(figsize=figsize)
+    plt.scatter(predictions, y_true)
+    
+    if title:
+        plt.title(title)
+    plt.xlabel('Predicted Values')
+    plt.ylabel('Actual Values')
+    if save_to:
+        plt.savefig(save_to)
+    plt.show()
